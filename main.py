@@ -1,12 +1,33 @@
 class Automato:
 
-    def __init__(self, states, initial_state, final_state, alphabet,
-                 transitions):
+    def __init__(self, states, final_state, alphabet, transitions):
         self.states = states
-        self.initial_state = initial_state
-        self.final_state = final_state
+        self.initial_state = [
+            state if state.is_initial else None for state in states
+        ]
+        self.final_state = [
+            state if state.is_final else None for state in states
+        ]
         self.alphabet = alphabet
-        self.current_state = initial_state
+        self.current_state = self.initial_state[0]
+        self.transitions = transitions
+        self.accepting_state = final_state
+
+    def transition(self, symbol):
+        if symbol in self.alphabet:
+            for transition in self.current_state.transitions:
+                if symbol in transition:
+                    for state in self.states:
+                        if state.name == transition.get(symbol):
+                            self.current_state = state
+                            return True
+        else:
+            raise Exception("Symbol not in alphabet")
+
+    def __repr__(self):
+        return (
+            f"""Estados: {self.states}\nEstado Inicial: {self.initial_state}\nEstado de aceitação: {self.accepting_state}\nAlfabeto: {self.alphabet}\nTransições: {self.transitions}"""
+        )
 
 
 class State:
@@ -49,10 +70,6 @@ class Parser:
         alphabet = formatted_input_symbols[alphabetRange + 1:transitionsRange]
         transitions = formatted_input_symbols[transitionsRange + 1:]
 
-        print(
-            f"""States: {states}\nInitial: {initial_state}\nAccepting: {accepting_state}\nAlphabet: {alphabet}\nTransitions: {transitions}"""
-        )
-
         # Get the string from the file and convert to the state class
         formattedStates = []
         for state in states:
@@ -70,11 +87,12 @@ class Parser:
                       is_final=is_final)
             formattedStates.append(s)
 
-        automato = Automato(states=formattedStates,
-                            initial_state=initial_state,
-                            final_state=accepting_state,
-                            alphabet=alphabet,
-                            transitions=transitions)
+        automato = Automato(
+            states=formattedStates,
+            # initial_state=initial_state,
+            final_state=accepting_state,
+            alphabet=alphabet,
+            transitions=transitions)
 
         return automato
 
@@ -91,22 +109,11 @@ class Parser:
 
 
 automato = Parser().parse()
+print(automato)
 
-# automato = Automato(
-#   states = [
-#     State(name = 's0', transitions = {'a':'s1', 'b':'s0'}, is_initial = True),
-#     State(name = 's1', transitions = {'a':'s1', 'b':'s0'}, is_final = True)
-#   ],
-#   initial_state = 's0',
-#   final_state = 's1',
-#   alphabet = ['a', 'b'],
-#   transitions = {
-#     's0': {'a':'s1', 'b':'s0'},
-#     's1': {'a':'s1', 'b':'s0'}
-#   },
-#   input_symbols = input_symbols
-# )
+entry_point = input("\nDigite uma palavra: ")
 
-# input_symbols = Parser().parse();
-# print(automato.states)
-# print(automato.input_symbols)
+for symbol in entry_point:
+    automato.transition(symbol)
+
+print(f"\n Estado atual após as transições: {automato.current_state}")

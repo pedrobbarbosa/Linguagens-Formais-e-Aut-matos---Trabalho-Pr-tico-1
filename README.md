@@ -8,3 +8,17 @@ O trabalho prático consiste na implementação de um programa que permita cadas
 
 ## Componentes do grupo
 - Pedro Felipe Barbosa Rodrigues
+
+## Como utilizar
+Edite o arquivo input.txt com o automato escrito da forma correta (o script não irá analisar reportar errors caso ocorra erro de sintaxe) e execute o código no shell:
+	python main.py
+
+Estados: [s0, s1]
+Estado Inicial: [s0, None]
+Estado de aceitação: ['s1']
+Alfabeto: ['a', 'b']
+Transições: ['s0:a>s0', 's0:b>s1']
+
+Digite uma palavra: ab
+
+Estado atual após as transições: s1
